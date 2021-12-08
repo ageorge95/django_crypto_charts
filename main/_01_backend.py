@@ -1,6 +1,7 @@
 from requests import get
 from datetime import datetime
 from logging import getLogger
+from traceback import format_exc
 import plotly.express as px
 import plotly.graph_objects as go
 from main._02_config import pairs_to_show
@@ -68,33 +69,40 @@ class BuildPlotlyHTML(ContextMenuBase):
 
 class CryptoCharts():
 
+    def __init__(self):
+        self._log = getLogger()
+
     def return_final_html(self):
 
-        final_html_code = '''
-                            <table>
-                          '''
+        try:
+            final_html_code = '''
+                                <table>
+                              '''
 
-        for pair in pairs_to_show.items():
-            final_html_code += '<tr>'
-            for input in pair[1]:
-                with globals()['APIwrapper{}'.format(input['platform'])]() as do:
-                    API_out = do.get(**input['method_args'])
+            for pair in pairs_to_show.items():
+                final_html_code += '<tr>'
+                for input in pair[1]:
+                    with globals()['APIwrapper{}'.format(input['platform'])]() as do:
+                        API_out = do.get(**input['method_args'])
 
-                x_to_send = [entry['local_time'] for entry in API_out]
-                y_to_send = [entry['close_price'] for entry in API_out]
-                x_to_send.reverse()
-                y_to_send.reverse()
+                    x_to_send = [entry['local_time'] for entry in API_out]
+                    y_to_send = [entry['close_price'] for entry in API_out]
+                    x_to_send.reverse()
+                    y_to_send.reverse()
 
-                with BuildPlotlyHTML() as do:
+                    with BuildPlotlyHTML() as do:
 
-                    plotly_code = do.get_plotly_html_graph(x=x_to_send,
-                                                           y=y_to_send,
-                                                           title=input['title'])
+                        plotly_code = do.get_plotly_html_graph(x=x_to_send,
+                                                               y=y_to_send,
+                                                               title=input['title'])
 
-                final_html_code += '<th>{graph_code}</th>'.format(graph_code=plotly_code)
-            final_html_code += '</tr>'
-        final_html_code += '''
-                            </table>
-                           '''
+                    final_html_code += '<th>{graph_code}</th>'.format(graph_code=plotly_code)
+                final_html_code += '</tr>'
+            final_html_code += '''
+                                </table>
+                               '''
 
-        return final_html_code
+            return final_html_code
+        except:
+            self._log.error('Error found:\n{}'.format(format_exc(chain=False)))
+            return '<p> ERROR </p>'

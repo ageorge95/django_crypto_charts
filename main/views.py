@@ -1,7 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
 from django.http import HttpResponse
-from time import sleep
 from main._01_backend import CryptoCharts
 
 # Create your views here.
