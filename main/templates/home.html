@@ -16,16 +16,14 @@
     // Function for adding User data and removing loading animation
     var replace_data = function(data){
         $('#loading').remove();
-        $('#success').append(data.data);
+        $('#success').append(data);
     }
 
     // AJAX call when page has loaded
     $(document).ready(function(){
         $.ajax({
-            url: '/test/',
-            data: {
-                'name': 'FOO'
-            },
+            url: '/return_graphs_code/',
+            data: {},
             data_type: 'html',
             success: function(data){
                 replace_data(data);
