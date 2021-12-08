@@ -21,7 +21,7 @@ def main():
     else:
         # execute the runserver command, with --noreload
         # reloading causes the code to be executed twice, for the time being --noreload is a must !
-        execute_from_command_line(['manage.py', 'runserver', '5578', '--noreload'])
+        execute_from_command_line(['manage.py', 'runserver', '0.0.0.0:5578', '--noreload'])
 
 
 if __name__ == '__main__':
