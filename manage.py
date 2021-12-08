@@ -25,5 +25,6 @@ def main():
 
 
 if __name__ == '__main__':
+    os.system('color')
     configure_logger()
     main()
