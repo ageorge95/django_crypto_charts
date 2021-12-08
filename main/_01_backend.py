@@ -1,24 +1,37 @@
 from requests import get
 from datetime import datetime
+from logging import getLogger
 import plotly.express as px
 import plotly.graph_objects as go
 from main._02_config import pairs_to_show
+from main._00_base import ContextMenuBase
 
-class CryptoCharts():
+class APIwrapperXT(ContextMenuBase):
 
-    def get_from_XT(self,
-                    pair,
-                    period_s):
+    _log: getLogger()
+
+    def get(self,
+            pair,
+            period_s):
+
+        self._log.info('Received pair {} and period_s {}.'.format(pair,
+                                                                  period_s))
 
         XT_response = get('https://www.xt.pub/exchange/api/markets/returnChartData?currencyPair={pair}&period={period_s}'.format(pair=pair,
                                                                                                                                  period_s=period_s)).json()
         return [{'local_time': datetime.fromtimestamp(entry['date']/1000),
                  'close_price': entry['close']} for entry in XT_response]
 
-    def transform_to_plotly_html(self,
-                                 x,
-                                 y,
-                                 title):
+class BuildPlotlyHTML(ContextMenuBase):
+
+    _log: getLogger()
+
+    def get_plotly_html_graph(self,
+                              x,
+                              y,
+                              title):
+
+        self._log.info('Received graph to html code conversion request for {}'.format(title))
 
         minimum = {'index': x[y.index(min(y))],
                    'value': min(y)}
@@ -53,7 +66,9 @@ class CryptoCharts():
 
         return fig.to_html(include_plotlyjs=False)
 
-    def return_html_code(self):
+class CryptoCharts():
+
+    def return_final_html(self):
 
         final_html_code = '''
                             <table>
@@ -62,16 +77,19 @@ class CryptoCharts():
         for pair in pairs_to_show.items():
             final_html_code += '<tr>'
             for input in pair[1]:
-                API_out = getattr(self, 'get_from_{}'.format(input['platform']))(**input['method_args'])
+                with globals()['APIwrapper{}'.format(input['platform'])]() as do:
+                    API_out = do.get(**input['method_args'])
 
                 x_to_send = [entry['local_time'] for entry in API_out]
                 y_to_send = [entry['close_price'] for entry in API_out]
                 x_to_send.reverse()
                 y_to_send.reverse()
 
-                plotly_code = self.transform_to_plotly_html(x=x_to_send,
-                                                            y=y_to_send,
-                                                            title=input['title'])
+                with BuildPlotlyHTML() as do:
+
+                    plotly_code = do.get_plotly_html_graph(x=x_to_send,
+                                                           y=y_to_send,
+                                                           title=input['title'])
 
                 final_html_code += '<th>{graph_code}</th>'.format(graph_code=plotly_code)
             final_html_code += '</tr>'

@@ -10,4 +10,4 @@ def landing_page(request):
     return render(request, "home.html", {})
 
 def return_graphs_code(request):
-    return HttpResponse(CryptoCharts().return_html_code())
+    return HttpResponse(CryptoCharts().return_final_html())
