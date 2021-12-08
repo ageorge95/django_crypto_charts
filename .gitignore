@@ -1,0 +1,5 @@
+.idea
+.pyc
+__pycache__
+runtime_log.log
+db.sqlite3
