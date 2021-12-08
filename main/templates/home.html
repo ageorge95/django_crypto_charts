@@ -1,12 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-<head>
-    <!-- Don't forget to load jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-</head>
 
-<body>
-<h1>Default Page</h1>
+<h1>Crypto charts</h1>
 
 <!-- The loading image -->
 <div id="loading">
@@ -15,11 +10,9 @@
 
 <!-- Container for result -->
 <div id="success">
-
 </div>
 
 <script>
-
     // Function for adding User data and removing loading animation
     var replace_data = function(data){
         $('#loading').remove();
@@ -39,7 +32,6 @@
             }
         });
     });
-
 </script>
-</body>
+
 {% endblock %}
