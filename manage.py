@@ -3,8 +3,8 @@
 import os
 import sys
 
-
 def main():
+
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_crypto_charts.settings')
     try:
@@ -15,7 +15,12 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
-    execute_from_command_line(sys.argv)
+    if len(sys.argv) > 1: # execute the command from the command line
+        execute_from_command_line(sys.argv)
+    else:
+        # execute the runserver command, with --noreload
+        # reloading causes the code to be executed twice, for the time being --noreload is a must !
+        execute_from_command_line(['manage.py', 'runserver', '--noreload'])
 
 
 if __name__ == '__main__':
