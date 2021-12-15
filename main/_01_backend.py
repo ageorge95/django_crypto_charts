@@ -18,8 +18,11 @@ class APIwrapperXT(ContextMenuBase):
         self._log.info('Received pair {} and period_s {}.'.format(pair,
                                                                   period_s))
 
-        XT_response = get('https://www.xt.pub/exchange/api/markets/returnChartData?currencyPair={pair}&period={period_s}'.format(pair=pair,
-                                                                                                                                 period_s=period_s)).json()
+        API_request = 'https://www.xt.pub/exchange/api/markets/returnChartData?currencyPair={pair}&period={period_s}'.format(pair=pair,
+                                                                                                                             period_s=period_s)
+        self._log.info('Sending API request: {}'.format(API_request))
+        XT_response = get(API_request).json()
+
         return [{'local_time': datetime.fromtimestamp(entry['date']/1000),
                  'close_price': entry['close']} for entry in XT_response]
 
