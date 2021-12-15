@@ -18,13 +18,14 @@ class APIwrapperXT(ContextMenuBase):
         self._log.info('Received pair {} and period_s {}.'.format(pair,
                                                                   period_s))
 
-        API_request = 'https://www.xt.pub/exchange/api/markets/returnChartData?currencyPair={pair}&period={period_s}'.format(pair=pair,
-                                                                                                                             period_s=period_s)
+        API_request = 'https://api.xt.com/data/api/v1/getKLine?market={pair}&type={period_s}&since=0'.format(pair=pair,
+                                                                                                             period_s=period_s)
         self._log.info('Sending API request: {}'.format(API_request))
         XT_response = get(API_request).json()
+        XT_response_data = XT_response['datas']
 
-        return [{'local_time': datetime.fromtimestamp(entry['date']/1000),
-                 'close_price': entry['close']} for entry in XT_response]
+        return [{'local_time': datetime.fromtimestamp(entry[0]),
+                 'close_price': entry[4]} for entry in XT_response_data]
 
 class BuildPlotlyHTML(ContextMenuBase):
 
