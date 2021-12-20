@@ -43,4 +43,18 @@ pairs_to_show = {'BTC': [{'platform_link': 'https://www.xt.com/tradePro/btc_usdt
                           'method_args': {'pair': 'xch_usdt',
                                           'period_s': '1day'},
                           'title': 'XCH long __ xch_usdt __ 10 MONTHS'}
+                 ],
+                 'SIT': [
+                        {'platform_link': 'https://trade.citex.co.kr/trade/SIT_USDT',
+                         'platform': 'CITEX',
+                         'method_args': {'pair': 'sit_usdt',
+                                         'period_m': 1,
+                                         'size': 360},
+                         'title': 'SIT short __ sit_usdt __ 6 HOURS'},
+                         {'platform_link': 'https://trade.citex.co.kr/trade/SIT_USDT',
+                          'platform': 'CITEX',
+                          'method_args': {'pair': 'sit_usdt',
+                                          'period_m': 1440,
+                                          'size': 300},
+                          'title': 'SIT long __ sit_usdt __ 10 MONTHS'}
                  ]}
