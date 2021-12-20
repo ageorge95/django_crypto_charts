@@ -1,4 +1,4 @@
-# WILLOW-chia-forks-offline-wallet-balance
+# Django-crypto-charts
 Collection of scripts used to run your own crypto charts server.
 
 ## Contributors
