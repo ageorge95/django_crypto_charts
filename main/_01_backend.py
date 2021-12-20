@@ -7,6 +7,29 @@ import plotly.graph_objects as go
 from main._02_config import pairs_to_show
 from main._00_base import ContextMenuBase
 
+class APIwrapperCITEX(ContextMenuBase):
+    _log: getLogger()
+
+    def get(self,
+            pair,
+            period_m,
+            size):
+
+        self._log = getLogger()
+
+        self._log.info('Received pair {}, period_s {} and size {}.'.format(pair,
+                                                                           period_m,
+                                                                           size))
+
+        API_request = 'https://api.citex.vip/v1/common/candlestick?symbol={pair}&type={period_m}&size={size}'.format(pair=pair,
+                                                                                                                    period_m=period_m,
+                                                                                                                    size=size)
+        self._log.info('Sending API request: {}'.format(API_request))
+        citex_response = get(API_request).json()
+
+        return [{'local_time': datetime.fromtimestamp(entry[0]/1000),
+                 'close_price': float(entry[4])} for entry in citex_response]
+
 class APIwrapperXT(ContextMenuBase):
 
     _log: getLogger()
