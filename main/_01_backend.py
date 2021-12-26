@@ -109,21 +109,24 @@ class CryptoCharts():
             for pair in pairs_to_show.items():
                 final_html_code += '<tr>'
                 for input in pair[1]:
-                    with globals()['APIwrapper{}'.format(input['platform'])]() as do:
-                        API_out = do.get(**input['method_args'])
+                    try:
+                        with globals()['APIwrapper{}'.format(input['platform'])]() as do:
+                            API_out = do.get(**input['method_args'])
 
-                    x_to_send = [entry['local_time'] for entry in API_out]
-                    y_to_send = [entry['close_price'] for entry in API_out]
-                    x_to_send.reverse()
-                    y_to_send.reverse()
+                        x_to_send = [entry['local_time'] for entry in API_out]
+                        y_to_send = [entry['close_price'] for entry in API_out]
+                        x_to_send.reverse()
+                        y_to_send.reverse()
 
-                    with BuildPlotlyHTML() as do:
+                        with BuildPlotlyHTML() as do:
 
-                        plotly_code = do.get_plotly_html_graph(x=x_to_send,
-                                                               y=y_to_send,
-                                                               title=input['title'])
-
-                    final_html_code += '<th>{graph_code}</th>'.format(graph_code=plotly_code)
+                            plotly_code = do.get_plotly_html_graph(x=x_to_send,
+                                                                   y=y_to_send,
+                                                                   title=input['title'])
+                        final_html_code += '<th>{graph_code}</th>'.format(graph_code=plotly_code)
+                    except:
+                        final_html_code += '<th>{title}<br>ERROR</th>'.format(title=input['title'])
+                        self._log.error(format_exc(chain=False))
                 final_html_code += '</tr>'
             final_html_code += '''
                                 </table>
