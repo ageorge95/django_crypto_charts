@@ -1,4 +1,5 @@
-pairs_to_show = {'BTC': [{'platform_link': 'https://www.xt.com/tradePro/btc_usdt',
+pairs_to_show = {
+                'BTC': [{'platform_link': 'https://www.xt.com/tradePro/btc_usdt',
                          'platform': 'XT',
                          'method_args': {'pair': 'btc_usdt',
                                          'period_s': '1min'},
