@@ -41,7 +41,7 @@ class APIwrapperXT(ContextMenuBase):
         self._log.info('Received pair {} and period_s {}.'.format(pair,
                                                                   period_s))
 
-        API_request = 'https://api.xt.com/data/api/v1/getKLine?market={pair}&type={period_s}&since=0'.format(pair=pair,
+        API_request = 'https://api.xt.pub/data/api/v1/getKLine?market={pair}&type={period_s}&since=0'.format(pair=pair,
                                                                                                              period_s=period_s)
         self._log.info('Sending API request: {}'.format(API_request))
         XT_response = get(API_request).json()
