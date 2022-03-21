@@ -5,7 +5,10 @@ from traceback import format_exc
 import plotly.express as px
 import plotly.graph_objects as go
 from main._02_config import pairs_to_show
-from main._00_base import ContextMenuBase
+from main._00_base import ContextMenuBase,\
+    Singleton
+from time import sleep
+from threading import Thread
 
 class APIwrapperCITEX(ContextMenuBase):
     _log: getLogger()
@@ -94,7 +97,7 @@ class BuildPlotlyHTML(ContextMenuBase):
 
         return fig.to_html(include_plotlyjs=False)
 
-class CryptoCharts():
+class CryptoCharts(metaclass=Singleton):
 
     def __init__(self):
         self._log = getLogger()
@@ -109,24 +112,7 @@ class CryptoCharts():
             for pair in pairs_to_show.items():
                 final_html_code += '<tr>'
                 for input in pair[1]:
-                    try:
-                        with globals()['APIwrapper{}'.format(input['platform'])]() as do:
-                            API_out = do.get(**input['method_args'])
-
-                        x_to_send = [entry['local_time'] for entry in API_out]
-                        y_to_send = [entry['close_price'] for entry in API_out]
-                        x_to_send.reverse()
-                        y_to_send.reverse()
-
-                        with BuildPlotlyHTML() as do:
-
-                            plotly_code = do.get_plotly_html_graph(x=x_to_send,
-                                                                   y=y_to_send,
-                                                                   title=input['title'])
-                        final_html_code += '<th>{graph_code}</th>'.format(graph_code=plotly_code)
-                    except:
-                        final_html_code += '<th>{title}<br>ERROR</th>'.format(title=input['title'])
-                        self._log.error(format_exc(chain=False))
+                    final_html_code += self.shared_cache[input['title']]
                 final_html_code += '</tr>'
             final_html_code += '''
                                 </table>
@@ -136,3 +122,46 @@ class CryptoCharts():
         except:
             self._log.error('Error found:\n{}'.format(format_exc(chain=False)))
             return '<p> ERROR </p>'
+
+class slave_cache_manager(ContextMenuBase,
+                          metaclass=Singleton):
+    def __init__(self):
+        super(slave_cache_manager, self).__init__()
+
+    def do(self):
+        for pair in pairs_to_show.items():
+            for input in pair[1]:
+                try:
+                    with globals()['APIwrapper{}'.format(input['platform'])]() as do:
+                        API_out = do.get(**input['method_args'])
+
+                    x_to_send = [entry['local_time'] for entry in API_out]
+                    y_to_send = [entry['close_price'] for entry in API_out]
+                    x_to_send.reverse()
+                    y_to_send.reverse()
+
+                    with BuildPlotlyHTML() as do:
+
+                        plotly_code = do.get_plotly_html_graph(x=x_to_send,
+                                                               y=y_to_send,
+                                                               title=input['title'])
+                    self.shared_cache[input['title']] = '<th>{graph_code}</th>'.format(graph_code=plotly_code)
+                except:
+                    self.shared_cache[input['title']] = '<th>{title}<br>ERROR</th>'.format(title=input['title'])
+                    self._log.error(format_exc(chain=False))
+
+class worker_daemon_thread(metaclass=Singleton):
+
+    def starter_wrapper(self,
+                        obj,
+                        cycle_sleep_s:int):
+        while True:
+            with obj() as init_obj:
+                init_obj.do()
+            sleep(cycle_sleep_s)
+
+    def start_all_threads(self):
+        for ContextClass in [{'obj': slave_cache_manager,
+                              'cycle_sleep_s': 999}
+                             ]:
+            Thread(target=self.starter_wrapper, kwargs={**ContextClass}).start()
