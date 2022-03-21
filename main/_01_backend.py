@@ -112,7 +112,11 @@ class CryptoCharts(metaclass=Singleton):
             for pair in pairs_to_show.items():
                 final_html_code += '<tr>'
                 for input in pair[1]:
-                    final_html_code += self.shared_cache[input['title']]
+                    final_html_code += '<th>'
+                    final_html_code += 'Graph age: ' + str(datetime.now() - self.shared_cache[input['title']]['date_created'])
+                    final_html_code += '<br>'
+                    final_html_code += self.shared_cache[input['title']]['plotly_graph']
+                    final_html_code += '</th>'
                 final_html_code += '</tr>'
             final_html_code += '''
                                 </table>
@@ -145,11 +149,12 @@ class slave_cache_manager(ContextMenuBase,
                         plotly_code = do.get_plotly_html_graph(x=x_to_send,
                                                                y=y_to_send,
                                                                title=input['title'])
-                    self.shared_cache[input['title']] = '<th>{graph_code}</th>'.format(graph_code=plotly_code)
+                    self.shared_cache[input['title']] = {'plotly_graph': plotly_code,
+                                                         'date_created': datetime.now()}
                 except:
                     # only add the exception text if the last stored result was also an exception
                     # reason: if the last response was valid and the current response threw an exception, keep the previous valid response
-                    exception_html_code = '<th>{title}<br>ERROR</th>'.format(title=input['title'])
+                    exception_html_code = f"{ input['title'] }<br>ERROR"
 
                     add_flag = False
                     if input['title'] in self.shared_cache.keys():
@@ -157,7 +162,8 @@ class slave_cache_manager(ContextMenuBase,
                             add_flag = True
                     else:
                         add_flag = True
-                    if add_flag: self.shared_cache[input['title']] = exception_html_code
+                    if add_flag: self.shared_cache[input['title']] = {'plotly_graph': exception_html_code,
+                                                                      'date_created': datetime.now()}
 
                     self._log.error(format_exc(chain=False))
 
