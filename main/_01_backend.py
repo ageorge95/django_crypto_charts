@@ -147,7 +147,18 @@ class slave_cache_manager(ContextMenuBase,
                                                                title=input['title'])
                     self.shared_cache[input['title']] = '<th>{graph_code}</th>'.format(graph_code=plotly_code)
                 except:
-                    self.shared_cache[input['title']] = '<th>{title}<br>ERROR</th>'.format(title=input['title'])
+                    # only add the exception text if the last stored result was also an exception
+                    # reason: if the last response was valid and the current response threw an exception, keep the previous valid response
+                    exception_html_code = '<th>{title}<br>ERROR</th>'.format(title=input['title'])
+
+                    add_flag = False
+                    if input['title'] in self.shared_cache.keys():
+                        if self.shared_cache[input['title']] == exception_html_code:
+                            add_flag = True
+                    else:
+                        add_flag = True
+                    if add_flag: self.shared_cache[input['title']] = exception_html_code
+
                     self._log.error(format_exc(chain=False))
 
 class worker_daemon_thread(metaclass=Singleton):
