@@ -6,6 +6,22 @@ from logging import basicConfig,\
     Formatter,\
     StreamHandler
 from concurrent_log_handler import ConcurrentRotatingFileHandler
+from multiprocessing import Manager
+
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+
+        if 'shared_cache' not in cls._instances.keys():
+            cls._instances['shared_cache'] = Manager().dict()
+
+        if cls not in cls._instances:
+
+            cls.shared_cache = cls._instances['shared_cache']
+
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
 
 class ContextMenuBase():
     def __enter__(self):

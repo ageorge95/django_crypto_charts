@@ -3,6 +3,7 @@
 import os
 import sys
 from main._00_base import configure_logger
+from main._01_backend import worker_daemon_thread
 
 def main():
 
@@ -27,4 +28,5 @@ def main():
 if __name__ == '__main__':
     os.system('color')
     configure_logger()
+    worker_daemon_thread().start_all_threads()
     main()
