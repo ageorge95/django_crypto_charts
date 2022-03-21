@@ -24,9 +24,9 @@ class APIwrapperCITEX(ContextMenuBase):
                                                                            period_m,
                                                                            size))
 
-        API_request = 'https://api.citex.vip/v1/common/candlestick?symbol={pair}&type={period_m}&size={size}'.format(pair=pair,
-                                                                                                                    period_m=period_m,
-                                                                                                                    size=size)
+        API_request = 'https://api.citex.co.kr/v1/common/candlestick?symbol={pair}&type={period_m}&size={size}'.format(pair=pair,
+                                                                                                                       period_m=period_m,
+                                                                                                                       size=size)
         self._log.info('Sending API request: {}'.format(API_request))
         citex_response = get(API_request).json()
 
