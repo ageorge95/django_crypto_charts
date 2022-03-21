@@ -179,6 +179,6 @@ class worker_daemon_thread(metaclass=Singleton):
 
     def start_all_threads(self):
         for ContextClass in [{'obj': slave_cache_manager,
-                              'cycle_sleep_s': 999}
+                              'cycle_sleep_s': 45*60}
                              ]:
             Thread(target=self.starter_wrapper, kwargs={**ContextClass}).start()
