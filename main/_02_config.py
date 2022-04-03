@@ -21,18 +21,6 @@ pairs_to_show = {
                                          'period_s': '1day'},
                          'title': 'HDD long __ hdd_usdt __ 10 MONTHS'},
                         ],
-                'SPARE': [
-                        {'platform_link': 'https://www.xt.com/tradePro/spare_usdt',
-                        'platform': 'XT',
-                        'method_args': {'pair': 'spare_usdt',
-                                        'period_s': '1min'},
-                        'title': 'SPARE short __ spare_usdt __ 6 HOURS'},
-                        {'platform_link': 'https://www.xt.com/tradePro/spare_usdt',
-                         'platform': 'XT',
-                         'method_args': {'pair': 'spare_usdt',
-                                         'period_s': '1day'},
-                         'title': 'SPARE long __ spare_usdt __ 10 MONTHS'}
-                ],
                 'XCH': [
                        {'platform_link': 'https://www.xt.com/tradePro/xch_usdt',
                         'platform': 'XT',
