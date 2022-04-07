@@ -1,3 +1,5 @@
+from time import time
+
 pairs_to_show = {
                 'BTC': [{'platform_link': 'https://www.xt.com/tradePro/btc_usdt',
                          'platform': 'XT',
@@ -57,5 +59,21 @@ pairs_to_show = {
                          'method_args': {'pair': 'sit_usdt',
                                          'period_m': 1440,
                                          'size': 300},
-                         'title': 'SIT long __ sit_usdt __ 10 MONTHS'}
+                         'title': 'SIT long __ sit_usdt __ 10 MONTHS'},
+                ],
+                'XCC': [
+                    {'platform_link': 'https://www.lbank.info/exchange/xcc/usdt',
+                     'platform': 'LBANK',
+                     'method_args': {'symbol': 'xcc_usdt',
+                                     'size': 360,
+                                     'type': 'minute1',
+                                     'timestamp': (lambda : int(time()) - 360*60)()},
+                     'title': 'XCC short __ xcc_usdt __ 6 HOURS'},
+                    {'platform_link': 'https://www.lbank.info/exchange/xcc/usdt',
+                     'platform': 'LBANK',
+                     'method_args': {'symbol': 'xcc_usdt',
+                                     'size': 300,
+                                     'type': 'day1',
+                                     'timestamp': (lambda : int(time()) - 300*24*60*60)()},
+                     'title': 'XCC long __ xcc_usdt __ 10 MONTHS'},
                 ]}

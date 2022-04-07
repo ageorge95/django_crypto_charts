@@ -10,6 +10,26 @@ from main._00_base import ContextMenuBase,\
 from time import sleep
 from threading import Thread
 
+class APIwrapperLBANK(ContextMenuBase):
+    _log: getLogger()
+
+    def get(self,
+            symbol,
+            size,
+            type,
+            timestamp):
+
+        self._log = getLogger()
+
+        self._log.info(f"Received symbol {symbol}, size {size} and type {type} since timestamp {timestamp}.")
+
+        API_request = f"https://api.lbank.info/v2/kline.do?symbol={symbol}&size={size}&type={type}&time={timestamp}"
+        self._log.info('Sending API request: {}'.format(API_request))
+        lbank_response = get(API_request).json()['data']
+
+        return [{'local_time': datetime.fromtimestamp(entry[0]),
+                 'close_price': float(entry[4])} for entry in lbank_response]
+
 class APIwrapperCITEX(ContextMenuBase):
     _log: getLogger()
 
