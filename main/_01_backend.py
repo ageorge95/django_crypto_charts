@@ -161,8 +161,9 @@ class slave_cache_manager(ContextMenuBase,
 
                     x_to_send = [entry['local_time'] for entry in API_out]
                     y_to_send = [entry['close_price'] for entry in API_out]
-                    x_to_send.reverse()
-                    y_to_send.reverse()
+                    if input['reverse']:
+                        x_to_send.reverse()
+                        y_to_send.reverse()
 
                     with BuildPlotlyHTML() as do:
 
