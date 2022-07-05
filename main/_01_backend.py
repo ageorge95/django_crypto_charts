@@ -96,6 +96,11 @@ class BuildPlotlyHTML(ContextMenuBase):
                       title=title,
                       labels=dict(x="time", y="value"))
 
+        # disable zoom and dragmode
+        fig['layout'][f'xaxis1']['fixedrange'] = True
+        fig['layout'][f'yaxis1']['fixedrange'] = True
+        fig['layout']['dragmode'] = False
+
         if current['value'] != maximum['value']:
             fig.add_trace(go.Scatter(x=[current['index'], current['index']],
                                      y=[current['value'], maximum['value']],
