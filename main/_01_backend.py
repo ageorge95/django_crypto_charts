@@ -4,8 +4,7 @@ from logging import getLogger
 from traceback import format_exc
 import plotly.express as px
 import plotly.graph_objects as go
-from main._02_config import pairs_to_show,\
-    VAYAMOS_time_offset_s
+from main._02_config import pairs_to_show
 from main._00_base import ContextMenuBase,\
     Singleton
 from time import sleep
@@ -95,7 +94,7 @@ class APIwrapperVAYAMOS(ContextMenuBase):
                                      "from": from_tmstmp(),
                                      "to": to_tmstmp()}).json()['candlestick']
 
-        return [{'local_time': datetime.fromtimestamp(int(entry['time'].split('.')[0])+VAYAMOS_time_offset_s),
+        return [{'local_time': datetime.fromtimestamp(int(entry['time'].split('.')[0])),
                  'close_price': float(entry['close'])} for entry in vayamos_response]
 
 class BuildPlotlyHTML(ContextMenuBase):
