@@ -77,25 +77,83 @@ class APIwrapperVAYAMOS(ContextMenuBase):
 
     _log: getLogger()
 
+    def send_API_call(self,
+                      from_tmstmp,
+                      to_tmstmp):
+        vayamos_response = get('https://api.vayamos.cc//spot/candlestick',
+                               json={"pair": self.pair,
+                                     "res": self.res,
+                                     "from": from_tmstmp,
+                                     "to": to_tmstmp}).json()['candlestick']
+        return [{'local_time': datetime.fromtimestamp(int(entry['time'].split('.')[0])),
+                 'close_price': float(entry['close'])} for entry in vayamos_response]
+
     def get(self,
             pair,
             res,
             from_tmstmp,
             to_tmstmp):
 
+        self.pair = pair
+        self.res = res
+        from_tmstmp = from_tmstmp()
+        to_tmstmp = to_tmstmp()
+
         self._log = getLogger()
 
-        self._log.info(f"Received pair {pair}, resolution {res} and since timestamp {from_tmstmp()} up until {to_tmstmp()}.")
+        self._log.info(f"Received pair {pair}, resolution {res} and since timestamp {from_tmstmp} up until {to_tmstmp}.")
 
-        self._log.info('Sending API request with a data payload ...')
-        vayamos_response = get('https://api.vayamos.cc//spot/candlestick',
-                               json={"pair": pair,
-                                     "res": res,
-                                     "from": from_tmstmp(),
-                                     "to": to_tmstmp()}).json()['candlestick']
+        # compute if multiple API calls are needed
+        # vayamos can return 500 max records per API call
+        if res == '1': # 1 minute
+            if (to_tmstmp - from_tmstmp)/60 > 500:
+                to_return = []
+                while (from_tmstmp + 500*60) < to_tmstmp:
+                    self._log.info(f'Sending API request with a data payload for a part of the timestamp: {from_tmstmp} -> {from_tmstmp + 500*60}...')
 
-        return [{'local_time': datetime.fromtimestamp(int(entry['time'].split('.')[0])),
-                 'close_price': float(entry['close'])} for entry in vayamos_response]
+                    to_return += self.send_API_call(from_tmstmp=from_tmstmp,
+                                                    to_tmstmp=from_tmstmp + 500*60)
+
+                    from_tmstmp += 500*60
+                    sleep(1) # some waiting between multiple API calls is always needed
+
+                self._log.info(f'Sending API request with a data payload for the last part of the timestamp: {from_tmstmp} -> {to_tmstmp}...')
+
+                to_return += self.send_API_call(from_tmstmp=from_tmstmp,
+                                                to_tmstmp=to_tmstmp)
+
+                return to_return
+
+            else:
+                self._log.info('Sending API request with a data payload for the whole timestamp period...')
+
+                return self.send_API_call(from_tmstmp=from_tmstmp,
+                                          to_tmstmp=to_tmstmp)
+
+        if res == '1D': # 1 day
+            if (to_tmstmp - from_tmstmp)/60/60/24 > 500:
+                to_return = []
+                while (from_tmstmp + 500*60*60*24) < to_tmstmp:
+                    self._log.info(f'Sending API request with a data payload for a part of the timestamp: {from_tmstmp} -> {from_tmstmp + 500*60*60*24}...')
+
+                    to_return += self.send_API_call(from_tmstmp=from_tmstmp,
+                                                    to_tmstmp=from_tmstmp + 500*60*60*24)
+
+                    from_tmstmp += 500*60*60*24
+                    sleep(1) # some waiting between multiple API calls is always needed
+
+                self._log.info(f'Sending API request with a data payload for a the last part of the timestamp: {from_tmstmp} -> {to_tmstmp}...')
+
+                to_return += self.send_API_call(from_tmstmp=from_tmstmp,
+                                                to_tmstmp=to_tmstmp + 500*60*60*24)
+
+                return to_return
+
+            else:
+                self._log.info('Sending API request with a data payload for the whole timestamp period...')
+
+                return self.send_API_call(from_tmstmp=from_tmstmp,
+                                          to_tmstmp=to_tmstmp)
 
 class BuildPlotlyHTML(ContextMenuBase):
 
@@ -180,6 +238,7 @@ class slave_cache_manager(ContextMenuBase,
                           metaclass=Singleton):
     def __init__(self):
         super(slave_cache_manager, self).__init__()
+        sleep(2) # allow the django server to fully start
 
     def do(self):
         for pair in pairs_to_show.items():
