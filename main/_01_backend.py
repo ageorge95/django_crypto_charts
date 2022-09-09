@@ -4,7 +4,8 @@ from logging import getLogger
 from traceback import format_exc
 import plotly.express as px
 import plotly.graph_objects as go
-from main._02_config import pairs_to_show
+from main._02_config import pairs_to_show,\
+    VAYAMOS_time_offset_s
 from main._00_base import ContextMenuBase,\
     Singleton
 from time import sleep
@@ -72,6 +73,30 @@ class APIwrapperXT(ContextMenuBase):
 
         return [{'local_time': datetime.fromtimestamp(entry[0]),
                  'close_price': entry[4]} for entry in XT_response_data]
+
+class APIwrapperVAYAMOS(ContextMenuBase):
+
+    _log: getLogger()
+
+    def get(self,
+            pair,
+            res,
+            from_tmstmp,
+            to_tmstmp):
+
+        self._log = getLogger()
+
+        self._log.info(f"Received pair {pair}, resolution {res} and since timestamp {from_tmstmp()} up until {to_tmstmp()}.")
+
+        self._log.info('Sending API request with a data payload ...')
+        vayamos_response = get('https://api.vayamos.cc//spot/candlestick',
+                               json={"pair": pair,
+                                     "res": res,
+                                     "from": from_tmstmp(),
+                                     "to": to_tmstmp()}).json()['candlestick']
+
+        return [{'local_time': datetime.fromtimestamp(int(entry['time'].split('.')[0])+VAYAMOS_time_offset_s),
+                 'close_price': float(entry['close'])} for entry in vayamos_response]
 
 class BuildPlotlyHTML(ContextMenuBase):
 
@@ -205,6 +230,6 @@ class worker_daemon_thread(metaclass=Singleton):
 
     def start_all_threads(self):
         for ContextClass in [{'obj': slave_cache_manager,
-                              'cycle_sleep_s': 2*60}
+                              'cycle_sleep_s': 45*60}
                              ]:
             Thread(target=self.starter_wrapper, kwargs={**ContextClass}).start()
