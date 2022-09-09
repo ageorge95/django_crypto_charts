@@ -21,9 +21,9 @@ class APIwrapperLBANK(ContextMenuBase):
 
         self._log = getLogger()
 
-        self._log.info(f"Received symbol {symbol}, size {size} and type {type} since timestamp {timestamp}.")
+        self._log.info(f"Received symbol {symbol}, size {size} and type {type} since timestamp {timestamp()}.")
 
-        API_request = f"https://api.lbank.info/v2/kline.do?symbol={symbol}&size={size}&type={type}&time={timestamp}"
+        API_request = f"https://api.lbank.info/v2/kline.do?symbol={symbol}&size={size}&type={type}&time={timestamp()}"
         self._log.info('Sending API request: {}'.format(API_request))
         lbank_response = get(API_request).json()['data']
 
@@ -205,6 +205,6 @@ class worker_daemon_thread(metaclass=Singleton):
 
     def start_all_threads(self):
         for ContextClass in [{'obj': slave_cache_manager,
-                              'cycle_sleep_s': 45*60}
+                              'cycle_sleep_s': 2*60}
                              ]:
             Thread(target=self.starter_wrapper, kwargs={**ContextClass}).start()

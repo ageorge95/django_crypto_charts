@@ -63,7 +63,7 @@ pairs_to_show = {
                      'method_args': {'symbol': 'xcc_usdt',
                                      'size': 360,
                                      'type': 'minute1',
-                                     'timestamp': (lambda : int(time()) - 360*60)()},
+                                     'timestamp': (lambda : int(time()) - 360*60)},
                      'title': 'XCC short __ xcc_usdt __ 6 HOURS',
                      'reverse': False},
                     {'platform_link': 'https://www.lbank.info/exchange/xcc/usdt',
@@ -71,7 +71,8 @@ pairs_to_show = {
                      'method_args': {'symbol': 'xcc_usdt',
                                      'size': 300,
                                      'type': 'day1',
-                                     'timestamp': (lambda : int(time()) - 300*24*60*60)()},
+                                     'timestamp': (lambda : int(time()) - 300*24*60*60)},
                      'title': 'XCC long __ xcc_usdt __ 10 MONTHS',
                      'reverse': False},
-                ]}
+                ]
+}
