@@ -176,7 +176,9 @@ class BuildPlotlyHTML(ContextMenuBase):
         fig = px.line(x=x,
                       y=y,
                       title=title,
-                      labels=dict(x="time", y="value"))
+                      labels=dict(x="time", y="value"),
+                      render_mode='svg', # webgl would be more fluid, but that may break the webgl contexts limit
+                      )
 
         # disable zoom and dragmode
         fig['layout'][f'xaxis1']['fixedrange'] = True
@@ -200,7 +202,8 @@ class BuildPlotlyHTML(ContextMenuBase):
                                      text=["", str(round(current['value']/minimum['value'],2))],
                                      textposition="bottom center",
                                      name='up',
-                                     marker_color='green'))
+                                     marker_color='green'
+                                     ))
 
         return fig.to_html(include_plotlyjs=False)
 
