@@ -185,6 +185,9 @@ class BuildPlotlyHTML(ContextMenuBase):
         fig['layout'][f'yaxis1']['fixedrange'] = True
         fig['layout']['dragmode'] = False
 
+        # disable the automatic number formatting
+        fig['layout'][f'yaxis1']['exponentformat'] = 'none'
+
         if current['value'] != maximum['value']:
             fig.add_trace(go.Scatter(x=[current['index'], current['index']],
                                      y=[current['value'], maximum['value']],
