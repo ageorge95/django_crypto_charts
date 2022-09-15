@@ -12,6 +12,7 @@ from threading import Thread
 from json import load,\
     dump
 from os import path
+from decimal import Decimal
 
 class APIwrapperLBANK(ContextMenuBase):
     _log: getLogger()
@@ -239,7 +240,8 @@ class BuildPlotlyHTML(ContextMenuBase):
         fig['layout']['dragmode'] = False
 
         # disable the automatic number formatting
-        fig['layout'][f'yaxis1']['exponentformat'] = 'none'
+        # may not be the most slick implementation, but it does the job well :)
+        fig['layout'][f'yaxis1']['tickformat'] = f".{max([abs(Decimal(str(_)).as_tuple().exponent) for _ in y])}f"
 
         ### add a horizontal line, if configured ###
         # small overhead loading the file over and over again, but implementing
