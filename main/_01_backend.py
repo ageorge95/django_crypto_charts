@@ -19,14 +19,13 @@ class APIwrapperLBANK(ContextMenuBase):
     def get(self,
             symbol,
             size,
-            type,
+            API_type,
             timestamp):
-
         self._log.warning(f'This APIwrapper ({type(self).__name__}) is not highly optimised - please do not configure many pairs with it.')
 
-        self._log.info(f"Received symbol {symbol}, size {size} and type {type} since timestamp {timestamp()}.")
+        self._log.info(f"Received symbol {symbol}, size {size} and API_type {API_type} since timestamp {timestamp()}.")
 
-        API_request = f"https://api.lbank.info/v2/kline.do?symbol={symbol}&size={size}&type={type}&time={timestamp()}"
+        API_request = f"https://api.lbank.info/v2/kline.do?symbol={symbol}&size={size}&type={API_type}&time={timestamp()}"
         self._log.info('Sending API request: {}'.format(API_request))
         lbank_response = get(API_request).json()['data']
 
