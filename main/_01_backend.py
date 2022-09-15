@@ -9,6 +9,9 @@ from main._00_base import ContextMenuBase,\
     Singleton
 from time import sleep
 from threading import Thread
+from json import load,\
+    dump
+from os import path
 
 class APIwrapperLBANK(ContextMenuBase):
     _log: getLogger()
@@ -219,7 +222,8 @@ class BuildPlotlyHTML(ContextMenuBase):
     def get_plotly_html_graph(self,
                               x,
                               y,
-                              title):
+                              title,
+                              coin):
 
         self._log.info('Received graph to html code conversion request for {}'.format(title))
 
@@ -244,6 +248,14 @@ class BuildPlotlyHTML(ContextMenuBase):
 
         # disable the automatic number formatting
         fig['layout'][f'yaxis1']['exponentformat'] = 'none'
+
+        ### add a horizontal line, if configured ###
+        # small overhead loading the file over and over again, but implementing
+        # a cache manager for this would be overkill, currently ...
+        with open('horizontal_lines.json', 'r') as hor_lines_in_handle:
+            self.hor_lines = load(hor_lines_in_handle)
+        if self.hor_lines[coin]:
+            fig.add_hline(y=self.hor_lines[coin])
 
         if current['value'] != maximum['value']:
             fig.add_trace(go.Scatter(x=[current['index'], current['index']],
@@ -320,7 +332,8 @@ class slave_cache_manager(ContextMenuBase,
 
                         plotly_code = do.get_plotly_html_graph(x=x_to_send,
                                                                y=y_to_send,
-                                                               title=input['title'])
+                                                               title=input['title'],
+                                                               coin=pair[0])
                     self.shared_cache[input['title']] = {'plotly_graph': plotly_code,
                                                          'date_created': datetime.now()}
                 except:
@@ -339,6 +352,24 @@ class slave_cache_manager(ContextMenuBase,
 
                     self._log.error(format_exc(chain=False))
 
+class initial_actions():
+    def __init__(self):
+        if path.isfile('horizontal_lines.json'):
+            with open('horizontal_lines.json', 'r') as hor_lines_in_handle:
+                try:
+                    self.hor_lines = load(hor_lines_in_handle)
+                except:
+                    self.hor_lines = {}
+        else:
+            self.hor_lines = {}
+
+        for configured_pair in pairs_to_show.keys():
+            if configured_pair not in self.hor_lines.keys():
+                self.hor_lines[configured_pair] = 0
+
+        with open('horizontal_lines.json', 'w') as hor_lines_out_handle:
+            dump(self.hor_lines, hor_lines_out_handle, indent=2)
+
 class worker_daemon_thread(metaclass=Singleton):
 
     def starter_wrapper(self,
@@ -354,3 +385,5 @@ class worker_daemon_thread(metaclass=Singleton):
                               'cycle_sleep_s': 45*60}
                              ]:
             Thread(target=self.starter_wrapper, kwargs={**ContextClass}).start()
+
+        initial_actions()
