@@ -4,3 +4,4 @@ __pycache__
 runtime_log.log
 db.sqlite3
 .__runtime_log.lock
+cache
