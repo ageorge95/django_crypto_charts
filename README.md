@@ -6,7 +6,14 @@ Collection of scripts used to run your own crypto charts server.
 ![alt text](https://c.tenor.com/FDwYMy302gMAAAAM/tumbleweed-silence.gif?raw=true)
 
 # High level overview
-- Main functionality: Using the django framework it will run a server that shows configurable crypto charts.
+- Contains a frontend and backend which is executed under the Django framework
+- Highly optimised API wrapper for Vayamos
+- Fairly optimised API wrappers for LBank, Citex and XT
+- Uses Ajax for smoother webpage loading
+- uses highly interactive plotly graphs
+
+# Short Dashboard Demo
+![alt text](https://github.com/ageorge95/django_crypto_charts/blob/media/media/dashboard.gif?raw=true)
 
 # Feedback/ Contribution
 - Please post any issues you encountered or any feature requests in the issues tab.
@@ -15,7 +22,7 @@ Collection of scripts used to run your own crypto charts server.
 # How to use
 The tool was tested just in Windows, but should work on every OS where python is supported.
 
-Moreover, being a server, just forward your configured port, and you can see it on every device out there.
+Moreover, being a server, just forward your configured port, and you can see it on every device.
 
 ## WINDOWS usage - instructions
 
