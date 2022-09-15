@@ -16,16 +16,13 @@ from os import path
 class APIwrapperLBANK(ContextMenuBase):
     _log: getLogger()
 
-    def __init__(self):
-        self._log.warning(f'This APIwrapper ({type(self).__name__}) is not highly optimised - please do not configure many pairs with it.')
-
     def get(self,
             symbol,
             size,
             type,
             timestamp):
 
-        self._log = getLogger()
+        self._log.warning(f'This APIwrapper ({type(self).__name__}) is not highly optimised - please do not configure many pairs with it.')
 
         self._log.info(f"Received symbol {symbol}, size {size} and type {type} since timestamp {timestamp()}.")
 
@@ -39,15 +36,12 @@ class APIwrapperLBANK(ContextMenuBase):
 class APIwrapperCITEX(ContextMenuBase):
     _log: getLogger()
 
-    def __init__(self):
-        self._log.warning(f'This APIwrapper ({type(self).__name__}) is not highly optimised - please do not configure many pairs with it.')
-
     def get(self,
             pair,
             period_m,
             size):
 
-        self._log = getLogger()
+        self._log.warning(f'This APIwrapper ({type(self).__name__}) is not highly optimised - please do not configure many pairs with it.')
 
         self._log.info('Received pair {}, period_s {} and size {}.'.format(pair,
                                                                            period_m,
@@ -65,12 +59,11 @@ class APIwrapperCITEX(ContextMenuBase):
 class APIwrapperXT(ContextMenuBase):
     _log: getLogger()
 
-    def __init__(self):
-        self._log.warning(f'This APIwrapper ({type(self).__name__}) is not highly optimised - please do not configure many pairs with it.')
-
     def get(self,
             pair,
             period_s):
+
+        self._log.warning(f'This APIwrapper ({type(self).__name__}) is not highly optimised - please do not configure many pairs with it.')
 
         self._log.info('Received pair {} and period_s {}.'.format(pair,
                                                                   period_s))
