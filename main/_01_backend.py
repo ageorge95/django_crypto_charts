@@ -13,6 +13,9 @@ from threading import Thread
 class APIwrapperLBANK(ContextMenuBase):
     _log: getLogger()
 
+    def __init__(self):
+        self._log.warning(f'This APIwrapper ({type(self).__name__}) is not highly optimised - please do not configure many pairs with it.')
+
     def get(self,
             symbol,
             size,
@@ -32,6 +35,9 @@ class APIwrapperLBANK(ContextMenuBase):
 
 class APIwrapperCITEX(ContextMenuBase):
     _log: getLogger()
+
+    def __init__(self):
+        self._log.warning(f'This APIwrapper ({type(self).__name__}) is not highly optimised - please do not configure many pairs with it.')
 
     def get(self,
             pair,
@@ -54,8 +60,10 @@ class APIwrapperCITEX(ContextMenuBase):
                  'close_price': float(entry[4])} for entry in citex_response]
 
 class APIwrapperXT(ContextMenuBase):
-
     _log: getLogger()
+
+    def __init__(self):
+        self._log.warning(f'This APIwrapper ({type(self).__name__}) is not highly optimised - please do not configure many pairs with it.')
 
     def get(self,
             pair,
