@@ -362,5 +362,23 @@ pairs_to_show = {
                                      'to_tmstmp': (lambda : int(time()))},
                      'title': 'LLC long __ LLC_usdt __ 6 MONTHS',
                      'reverse': False},
+                ],
+                'STOR': [
+                    {'platform_link': 'https://vayamos.cc/spot/STOR_USDT',
+                     'platform': 'VAYAMOS',
+                     'method_args': {'pair': 'STOR/USDT',
+                                     'res': '1',
+                                     'from_tmstmp': (lambda : int(time()) - 24*60*60),
+                                     'to_tmstmp': (lambda : int(time()))},
+                     'title': 'STOR short __ STOR_usdt __ 24 HOURS',
+                     'reverse': False},
+                    {'platform_link': 'https://vayamos.cc/spot/STOR_USDT',
+                     'platform': 'VAYAMOS',
+                     'method_args': {'pair': 'STOR/USDT',
+                                     'res': '1D',
+                                     'from_tmstmp': (lambda : int(time()) - 6*30*24*60*60),
+                                     'to_tmstmp': (lambda : int(time()))},
+                     'title': 'STOR long __ STOR_usdt __ 6 MONTHS',
+                     'reverse': False},
                 ]
 }
