@@ -68,14 +68,14 @@ class APIwrapperXT(ContextMenuBase):
         self._log.info('Received pair {} and period_s {}.'.format(pair,
                                                                   period_s))
 
-        API_request = 'https://api.xt.pub/data/api/v1/getKLine?market={pair}&type={period_s}&since=0'.format(pair=pair,
-                                                                                                             period_s=period_s)
+        API_request = 'https://sapi.xt.com/v4/public/kline?symbol={pair}&interval={period_s}'.format(pair=pair,
+                                                                                                     period_s=period_s)
         self._log.info('Sending API request: {}'.format(API_request))
         XT_response = get(API_request).json()
-        XT_response_data = XT_response['datas']
+        XT_response_data = XT_response['result']
 
-        return [{'local_time': datetime.fromtimestamp(entry[0]),
-                 'close_price': entry[4]} for entry in XT_response_data]
+        return [{'local_time': datetime.fromtimestamp(int(entry['t'])/1000),
+                 'close_price': float(entry['c'])} for entry in XT_response_data]
 
 class APIwrapperVAYAMOS(ContextMenuBase):
 
