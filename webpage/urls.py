@@ -1,4 +1,4 @@
-"""django_crypto_charts URL Configuration
+"""webpage URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-import main.views
+import CryptoCharts.views
 
 urlpatterns = [
-    path("", main.views.landing_page, name='index'),
-    path("return_graphs_code/", main.views.return_graphs_code, name='index'),
+    path("", CryptoCharts.views.landing_page, name='index'),
+    path("return_graphs_code/", CryptoCharts.views.return_graphs_code, name='index'),
 ]

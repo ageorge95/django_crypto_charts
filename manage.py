@@ -2,13 +2,13 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from main._00_base import configure_logger
-from main._01_backend import worker_daemon_thread
+from CryptoCharts._00_base import configure_logger
+from CryptoCharts._01_backend import worker_daemon_thread
 
 def main():
 
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_crypto_charts.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webpage.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

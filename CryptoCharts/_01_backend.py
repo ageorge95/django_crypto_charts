@@ -4,8 +4,8 @@ from logging import getLogger
 from traceback import format_exc
 import plotly.express as px
 import plotly.graph_objects as go
-from main._02_config import pairs_to_show
-from main._00_base import ContextMenuBase,\
+from CryptoCharts._02_config import pairs_to_show
+from CryptoCharts._00_base import ContextMenuBase,\
     Singleton
 from time import sleep
 from threading import Thread
