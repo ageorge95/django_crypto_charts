@@ -278,7 +278,8 @@ class CryptoCharts(metaclass=Singleton):
     def __init__(self):
         self._log = getLogger()
 
-    def return_final_html(self):
+    def return_final_html(self,
+                          pairs_to_show = pairs_to_show):
 
         try:
             final_html_code = '''
