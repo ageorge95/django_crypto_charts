@@ -77,7 +77,7 @@ class APIwrapperXT(ContextMenuBase):
         return [{'local_time': datetime.fromtimestamp(int(entry['t'])/1000),
                  'close_price': float(entry['c'])} for entry in XT_response_data]
 
-class APIwrapperVAYAMOS(ContextMenuBase):
+class APIwrapperINFINEX(ContextMenuBase):
 
     _log: getLogger()
 
@@ -88,7 +88,7 @@ class APIwrapperVAYAMOS(ContextMenuBase):
 
         final_from_tmstmp = from_tmstmp
         final_to_tmstmp = to_tmstmp
-        vayamos_response = []
+        infinex_response = []
 
         if use_cache:
             # bootstrap the current pair and resolution in the cache, if missing
@@ -112,7 +112,7 @@ class APIwrapperVAYAMOS(ContextMenuBase):
                     for entry in cached_response_descriptor['data']:
                         # if valid entries are found grab them from the cache
                         if final_from_tmstmp <= int(entry['time'].split('.')[0]) <= final_to_tmstmp:
-                            vayamos_response.append(entry)
+                            infinex_response.append(entry)
                             valid_added = True
                     if valid_added: # only if a valid entry wad added previously
                         final_from_tmstmp = min(cached_response_descriptor['to_tmstmp'], final_to_tmstmp)
@@ -122,16 +122,16 @@ class APIwrapperVAYAMOS(ContextMenuBase):
 
         # only call the PI if the cache does not have all the data
         if final_from_tmstmp != final_to_tmstmp:
-            final_vayamos_response = get('https://api.vayamos.cc//spot/candlestick',
+            final_infinex_response = get('https://api.infinex.cc//spot/candlestick',
                                    json={"pair": self.pair,
                                          "res": self.res,
                                          "from": final_from_tmstmp,
                                          "to": final_to_tmstmp}).json()['candlestick']
-            vayamos_response += final_vayamos_response
+            infinex_response += final_infinex_response
             self.cache[self.pair][self.res].append({'from_tmstmp': final_from_tmstmp,
                                                     'to_tmstmp': final_to_tmstmp,
                                                     'delta_timestamps': final_to_tmstmp-final_from_tmstmp,
-                                                    'data': final_vayamos_response})
+                                                    'data': final_infinex_response})
         else:
             if use_cache:
                 self._log.info('Fully served from the disk cache !')
@@ -139,7 +139,7 @@ class APIwrapperVAYAMOS(ContextMenuBase):
                 self._log.warning('from_timestamp is the same as to_timestamp. Was that on purpose !?')
 
         return [{'local_time': datetime.fromtimestamp(int(entry['time'].split('.')[0])),
-                 'close_price': float(entry['close'])} for entry in vayamos_response]
+                 'close_price': float(entry['close'])} for entry in infinex_response]
 
     def get(self,
             pair,
@@ -157,7 +157,7 @@ class APIwrapperVAYAMOS(ContextMenuBase):
         self._log.info(f"Received pair {pair}, resolution {res} and since timestamp {from_tmstmp} up until {to_tmstmp}.")
 
         # compute if multiple API calls are needed
-        # vayamos can return 500 max records per API call
+        # Infinex can return 500 max records per API call
         if res == '1': # 1 minute
             if (to_tmstmp - from_tmstmp)/60 > 500:
                 to_return = []
