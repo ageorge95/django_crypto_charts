@@ -246,10 +246,11 @@ class BuildPlotlyHTML(ContextMenuBase):
         ### add a horizontal line, if configured ###
         # small overhead loading the file over and over again, but implementing
         # a cache manager for this would be overkill, currently ...
-        with open('horizontal_lines.json', 'r') as hor_lines_in_handle:
-            self.hor_lines = load(hor_lines_in_handle)
-        if self.hor_lines[coin]:
-            fig.add_hline(y=self.hor_lines[coin])
+        if path.isfile('horizontal_lines.json'):
+            with open('horizontal_lines.json', 'r') as hor_lines_in_handle:
+                self.hor_lines = load(hor_lines_in_handle)
+            if self.hor_lines[coin]:
+                fig.add_hline(y=self.hor_lines[coin])
 
         if current['value'] != maximum['value']:
             fig.add_trace(go.Scatter(x=[current['index'], current['index']],
