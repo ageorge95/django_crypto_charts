@@ -26,7 +26,6 @@ def main():
 
 
 if __name__ == '__main__':
-    os.system('color')
     configure_logger()
     worker_daemon_thread().start_all_threads()
     main()

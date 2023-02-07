@@ -7,7 +7,9 @@ from logging import basicConfig,\
     StreamHandler
 from concurrent_log_handler import ConcurrentRotatingFileHandler
 from multiprocessing import Manager
-from os import path, mkdir
+from os import path,\
+    mkdir,\
+    system
 from json import load,\
     dump
 
@@ -66,6 +68,7 @@ class ContextMenuBase():
                                                         datetime.now() - self.exec_starttime))
 
 def configure_logger(basename : str = "runtime_log.log"):
+    system('color')
     class CustomFormatter(Formatter):
         grey = "\x1b[38;21m"
         yellow = "\x1b[33;21m"
