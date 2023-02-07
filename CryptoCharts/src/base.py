@@ -30,39 +30,14 @@ class Singleton(type):
 
 class ContextMenuBase():
 
-    def initialize_disk_cache(self):
-        # create the cache dir if missing
-        if not path.isdir('cache'):
-            mkdir('cache')
-
-        # load the cache from disk
-        if path.isfile(path.join('cache', type(self).__name__)+'.json'):
-            with open(path.join('cache', type(self).__name__)+'.json', 'r') as cache_in_handle:
-                try:
-                    self._log.info(f'Prior disk cache detected for {type(self).__name__} and loaded successfully !')
-                    self.cache = load(cache_in_handle)
-                except:
-                    self._log.warning(f'The disk cache is corrupted for {type(self).__name__}, will be reconstructed ...')
-                    self.cache = {}
-        else:
-            self._log.info(f'No prior disk cache detected for {type(self).__name__}. Will be created from scratch ...')
-            self.cache = {}
-
-    def save_disk_cache(self):
-        with open(path.join('cache', type(self).__name__) + '.json', 'w') as cache_out_handle:
-            dump(self.cache, cache_out_handle, indent=2)
-
     def __enter__(self):
         self.exec_starttime = datetime.now()
 
         self._log = getLogger()
 
-        self.initialize_disk_cache()
-
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.save_disk_cache()
 
         self._log.info('Execution of {} took {}'.format(type(self).__name__,
                                                         datetime.now() - self.exec_starttime))
