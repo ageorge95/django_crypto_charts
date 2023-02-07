@@ -7,11 +7,7 @@ from logging import basicConfig,\
     StreamHandler
 from concurrent_log_handler import ConcurrentRotatingFileHandler
 from multiprocessing import Manager
-from os import path,\
-    mkdir,\
-    system
-from json import load,\
-    dump
+from os import system
 
 class Singleton(type):
     _instances = {}
