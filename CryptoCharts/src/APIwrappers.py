@@ -79,60 +79,14 @@ class APIwrapperINFINEX(ContextMenuBase):
                       to_tmstmp,
                       use_cache = True):
 
-        final_from_tmstmp = from_tmstmp
-        final_to_tmstmp = to_tmstmp
-        infinex_response = []
-
-        if use_cache:
-            # bootstrap the current pair and resolution in the cache, if missing
-            if self.pair not in self.cache.keys():
-                self.cache[self.pair] = {}
-            if self.res not in self.cache[self.pair].keys():
-                self.cache[self.pair][self.res] = []
-
-            # remove entries from the cache that are too old
-            # for now only 50 entries will be kept in the cache, which may not be the best clean-up mechanism,
-            # but it will suffice for now
-            self.cache[self.pair][self.res] = self.cache[self.pair][self.res][-50:]
-
-            ### check if data from the cache can be used ###
-            for cached_response_descriptor in self.cache[self.pair][self.res]:
-
-                # if the to_timestamp is not before from_timestamp, meaning the call is not too old
-                if cached_response_descriptor['to_tmstmp'] > final_from_tmstmp:
-
-                    valid_added = False
-                    for entry in cached_response_descriptor['data']:
-                        # if valid entries are found grab them from the cache
-                        if final_from_tmstmp <= int(entry['time'].split('.')[0]) <= final_to_tmstmp:
-                            infinex_response.append(entry)
-                            valid_added = True
-                    if valid_added: # only if a valid entry wad added previously
-                        final_from_tmstmp = min(cached_response_descriptor['to_tmstmp'], final_to_tmstmp)
-
-            cache_hit_unit = ((to_tmstmp-from_tmstmp) - (final_to_tmstmp-final_from_tmstmp)) / (to_tmstmp-from_tmstmp)
-            self._log.info(f'Disk cache hit: {round(cache_hit_unit*100, 4)}%')
-
-        # only call the PI if the cache does not have all the data
-        if final_from_tmstmp != final_to_tmstmp:
-            final_infinex_response = get('https://api.infinex.cc//spot/candlestick',
-                                   json={"pair": self.pair,
-                                         "res": self.res,
-                                         "from": final_from_tmstmp,
-                                         "to": final_to_tmstmp}).json()['candlestick']
-            infinex_response += final_infinex_response
-            self.cache[self.pair][self.res].append({'from_tmstmp': final_from_tmstmp,
-                                                    'to_tmstmp': final_to_tmstmp,
-                                                    'delta_timestamps': final_to_tmstmp-final_from_tmstmp,
-                                                    'data': final_infinex_response})
-        else:
-            if use_cache:
-                self._log.info('Fully served from the disk cache !')
-            else:
-                self._log.warning('from_timestamp is the same as to_timestamp. Was that on purpose !?')
+        final_infinex_response = get('https://api.infinex.cc//spot/candlestick',
+                                     json={"pair": self.pair,
+                                           "res": self.res,
+                                           "from": from_tmstmp,
+                                           "to": to_tmstmp}).json()['candlestick']
 
         return [{'local_time': datetime.fromtimestamp(int(entry['time'].split('.')[0])),
-                 'close_price': float(entry['close'])} for entry in infinex_response]
+                 'close_price': float(entry['close'])} for entry in final_infinex_response]
 
     def get(self,
             pair,
