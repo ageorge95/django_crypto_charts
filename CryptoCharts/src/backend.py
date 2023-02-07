@@ -222,5 +222,3 @@ class worker_daemon_thread(metaclass=Singleton):
                               'cycle_sleep_s': 45*60}
                              ]:
             Thread(target=self.starter_wrapper, kwargs={**ContextClass}).start()
-
-        initial_actions()

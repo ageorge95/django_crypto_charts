@@ -3,7 +3,8 @@
 import os
 import sys
 from CryptoCharts.src.base import configure_logger
-from CryptoCharts.src.backend import worker_daemon_thread
+from CryptoCharts.src.backend import worker_daemon_thread,\
+    initial_actions
 
 def main():
 
@@ -27,5 +28,6 @@ def main():
 
 if __name__ == '__main__':
     configure_logger()
+    initial_actions()
     worker_daemon_thread().start_all_threads()
     main()
