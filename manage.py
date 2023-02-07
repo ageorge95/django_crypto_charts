@@ -5,6 +5,7 @@ import sys
 from CryptoCharts.src.base import configure_logger
 from CryptoCharts.src.backend import worker_daemon_thread,\
     initial_actions
+from CryptoCharts.src.config import pairs_to_show
 
 def main():
 
@@ -28,6 +29,6 @@ def main():
 
 if __name__ == '__main__':
     configure_logger()
-    initial_actions()
+    initial_actions(pairs_to_show=pairs_to_show)
     worker_daemon_thread().start_all_threads()
     main()

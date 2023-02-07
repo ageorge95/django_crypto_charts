@@ -3,9 +3,13 @@ from logging import getLogger
 from traceback import format_exc
 import plotly.express as px
 import plotly.graph_objects as go
-from CryptoCharts.src.config import pairs_to_show
 from CryptoCharts.src.base import ContextMenuBase,\
     Singleton
+from CryptoCharts.src.config import pairs_to_show
+from CryptoCharts.src.APIwrappers import APIwrapperXT,\
+    APIwrapperINFINEX,\
+    APIwrapperCITEX,\
+    APIwrapperLBANK
 from time import sleep
 from threading import Thread
 from json import load,\
@@ -84,7 +88,8 @@ class CryptoCharts(metaclass=Singleton):
     def __init__(self):
         self._log = getLogger()
 
-    def return_final_html(self):
+    def return_final_html(self,
+                          pairs_to_show=pairs_to_show):
 
         try:
             final_html_code = '''
@@ -109,54 +114,23 @@ class CryptoCharts(metaclass=Singleton):
             self._log.error('Error found:\n{}'.format(format_exc(chain=False)))
             return '<p> ERROR </p>'
 
-    def return_final_html_external(self,
-                                   pairs_to_show):
-
-        try:
-            final_html_code = '''
-                                <table>
-                              '''
-
-            for pair in pairs_to_show.items():
-                final_html_code += '<tr>'
-                for input in pair[1]:
-                    with globals()['APIwrapper{}'.format(input['platform'])]() as do:
-                        API_out = do.get(**input['method_args'])
-
-                    x_to_send = [entry['local_time'] for entry in API_out]
-                    y_to_send = [entry['close_price'] for entry in API_out]
-                    x_to_send.reverse()
-                    y_to_send.reverse()
-
-                    with BuildPlotlyHTML() as do:
-
-                        plotly_code = do.get_plotly_html_graph(x=x_to_send,
-                                                               y=y_to_send,
-                                                               title=input['title'],
-                                                               coin=pair[0])
-
-                    final_html_code += '<th>{graph_code}</th>'.format(graph_code=plotly_code)
-                final_html_code += '</tr>'
-            final_html_code += '''
-                                </table>
-                               '''
-
-            return final_html_code
-        except:
-            self._log.error('Error found:\n{}'.format(format_exc(chain=False)))
-            return '<p> ERROR </p>'
-
 class slave_cache_manager(ContextMenuBase,
                           metaclass=Singleton):
     def __init__(self):
         super(slave_cache_manager, self).__init__()
-        sleep(2) # allow the django server to fully start
 
-    def do(self):
+        # the existing API wrappers must be added in this dict
+        self.APIwrappers = {'APIwrapperXT': APIwrapperXT,
+                            'APIwrapperINFINEX': APIwrapperINFINEX,
+                            'APIwrapperCITEX': APIwrapperCITEX,
+                            'APIwrapperLBANK': APIwrapperLBANK}
+
+    def do(self,
+           pairs_to_show=pairs_to_show):
         for pair in pairs_to_show.items():
             for input in pair[1]:
                 try:
-                    with globals()['APIwrapper{}'.format(input['platform'])]() as do:
+                    with self.APIwrappers['APIwrapper{}'.format(input['platform'])]() as do:
                         API_out = do.get(**input['method_args'])
 
                     x_to_send = [entry['local_time'] for entry in API_out]
@@ -190,7 +164,8 @@ class slave_cache_manager(ContextMenuBase,
                     self._log.error(format_exc(chain=False))
 
 class initial_actions():
-    def __init__(self):
+    def __init__(self,
+                 pairs_to_show):
         if path.isfile('horizontal_lines.json'):
             with open('horizontal_lines.json', 'r') as hor_lines_in_handle:
                 try:
