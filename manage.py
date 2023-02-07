@@ -2,8 +2,8 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from CryptoCharts.base import configure_logger
-from CryptoCharts.backend import worker_daemon_thread
+from CryptoCharts.src.base import configure_logger
+from CryptoCharts.src.backend import worker_daemon_thread
 
 def main():
 

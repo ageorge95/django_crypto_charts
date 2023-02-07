@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from CryptoCharts.backend import CryptoCharts
+from CryptoCharts.src.backend import CryptoCharts
 
 # Create your views here.
 
