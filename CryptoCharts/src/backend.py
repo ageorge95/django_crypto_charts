@@ -3,7 +3,7 @@ from logging import getLogger
 from traceback import format_exc
 import plotly.express as px
 import plotly.graph_objects as go
-from CryptoCharts.src.base import ContextMenuBase,\
+from CryptoCharts.src.utils import ContextMenuBase,\
     Singleton
 from CryptoCharts.src.config import pairs_to_show
 from CryptoCharts.src.APIwrappers import APIwrapperXT,\

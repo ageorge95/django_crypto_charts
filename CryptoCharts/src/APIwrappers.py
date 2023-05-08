@@ -2,7 +2,7 @@ from datetime import datetime
 from logging import getLogger
 from time import sleep
 from requests import get
-from CryptoCharts.src.base import ContextMenuBase
+from CryptoCharts.src.utils import ContextMenuBase
 
 class APIwrapperLBANK(ContextMenuBase):
     _log: getLogger()
