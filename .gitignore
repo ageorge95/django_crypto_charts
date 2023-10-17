@@ -6,3 +6,5 @@ db.sqlite3
 .__runtime_log.lock
 cache
 horizontal_lines.json
+venv
+activate.bat
