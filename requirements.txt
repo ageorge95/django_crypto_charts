@@ -1,1 +1,5 @@
 django
+concurrent_log_handler
+plotly
+pandas
+requests
